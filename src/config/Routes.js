@@ -1,4 +1,5 @@
 const Routes = {
+  home: "/",
   choosefence: "/choosefence",
   login: "/login"
 };

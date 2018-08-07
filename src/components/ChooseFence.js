@@ -23,7 +23,8 @@ class ChooseFence extends Component {
     this.state = {
       lat: "",
       lon: "",
-      value: ''
+      value: "",
+      searchData: []
     };
   }
 
@@ -34,73 +35,53 @@ class ChooseFence extends Component {
   onDrawUpdate = ({ features }) => {
     console.log({ features });
   };
-  locationSearch = e => {
-    fetch(
+  locationSearch = async value => {
+    let data = await fetch(
       "https://geocoder.cit.api.here.com/6.2/geocode.json?searchtext=" +
-        e.target.value +
+        value +
         "&app_id=" +
         app_id +
         "&app_code=" +
         app_code
     )
       .then(res => res.json())
-      .then(resData =>
+      .then(resData => {
+        return resData.Response.View[0].Result;
         this.setState({
-          lat:
-            resData.Response.View[0].Result[0].Location.DisplayPosition
-              .Latitude,
-          lon:
-            resData.Response.View[0].Result[0].Location.DisplayPosition
-              .Longitude
-        })
-      );
+          searchData: resData.Response.View[0].Result
+        });
+      });
+    // console.log(data);
+    return data;
   };
   showSuggestions = e => {
     this.setState({
       value: e.target.value
     });
   };
+  goToLocation = value => {
+    this.setState({
+      lat: value.Location.DisplayPosition.Latitude,
+      lon: value.Location.DisplayPosition.Longitude
+    });
+  };
 
   render() {
-    // const inputProps = {
-    //   placeholder: "Type a programming language",
-    //   value,
-    //   onChange: this.onChange
-    // };
     return (
       <div>
-        <Header />
         <div id="mapContainer" />
         <div className="App-header">
           {/* <img src={logo} className="App-logo" alt="logo" /> */}
           <h2>Create a Fence</h2>
-          <input
-            type="text"
-            className="inputbox"
-            onChange={this.locationSearch}
+          <Autosuggestion
+            searchLocation={this.locationSearch}
+            place={this.state.searchData}
+            goToLocation={this.goToLocation}
           />
-          {/* <Autocomplete
-            getItemValue={item => item.label}
-            items={[{ label: "apple" }, { label: "banana" }, { label: "pear" }]}
-            renderItem={(item, isHighlighted) => (
-              <div
-                // style={{ background: isHighlighted ? "blue" : "blue" }}
-                key={item.label}
-              >
-                {item.label}
-              </div>
-            )}
-            // value="30"
-            onChange={this.showSuggestions}
-            onSelect={this.showSuggestions}
-            inputProps={this.inputProps}
-            placeholder="Search here"
-          /> */}
-          <Autosuggestion />
         </div>
         <Map
           style="mapbox://styles/mapbox/outdoors-v9" // eslint-disable-line
-          containerStyle={{ height: "400px", width: "100vw" }}
+          containerStyle={{ height: "400px", width: "400px" }}
           center={[this.state.lon, this.state.lat]}
           zoom={[13]}
         >

@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Routes from "../config/Routes";
 import Login from "./Login";
 import Maps from "./Maps";
+import Home from "./Home";
 
 class App extends Component {
   render() {
@@ -12,8 +13,9 @@ class App extends Component {
       <div>
         <Router>
           <Switch>
-            <Route exact path={Routes.login} component={Login} />
-            <Route exact path={Routes.choosefence} component={ChooseFence} />
+            <Route exact path={Routes.home} component={Home} />
+            <Route exact path={Routes.login} component={Home} />
+            <Route exact path={Routes.choosefence} component={Home} />
           </Switch>
         </Router>
       </div>
