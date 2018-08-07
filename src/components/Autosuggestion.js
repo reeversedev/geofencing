@@ -19,6 +19,7 @@ class Autosuggestion extends React.Component {
   // Teach Autosuggest how to calculate suggestions for any given input value.
   getSuggestions = async value => {
     let data = await this.props.searchLocation(value);
+    console.log("bunty", data);
     return data;
 
     // return inputLength === 0
@@ -33,15 +34,15 @@ class Autosuggestion extends React.Component {
   // based on the clicked suggestion. Teach Autosuggest how to calculate the
   // input value for every given suggestion.
   getSuggestionValue = suggestion => {
-    // console.log(suggestion);
+    console.log(suggestion);
     this.props.goToLocation(suggestion);
-    return suggestion.Location.Address.Label;
+    return suggestion.place_name;
   };
 
   // Use your imagination to render suggestions.
   renderSuggestion = suggestion => {
-    // console.log(suggestion);
-    return <div>{suggestion.Location.Address.Label}</div>;
+    console.log("render", suggestion);
+    return <div>{suggestion.place_name}</div>;
   };
 
   onChange = (event, { newValue }) => {
@@ -52,9 +53,9 @@ class Autosuggestion extends React.Component {
 
   // Autosuggest will call this function every time you need to update suggestions.
   // You already implemented this logic above, so just use it.
-  onSuggestionsFetchRequested = ({ value }) => {
+  onSuggestionsFetchRequested = async ({ value }) => {
     this.setState({
-      suggestions: this.getSuggestions(value)
+      suggestions: await this.getSuggestions(value)
     });
   };
 
@@ -67,10 +68,11 @@ class Autosuggestion extends React.Component {
 
   render() {
     const { value, suggestions } = this.state;
+    console.log("chintu", suggestions);
 
     // Autosuggest will pass through all these props to the input.
     const inputProps = {
-      placeholder: "Type a programming language",
+      placeholder: "Type a place name",
       value,
       onChange: this.onChange
     };

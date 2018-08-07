@@ -9,6 +9,7 @@ import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import info from "../config/info";
 import geoJSON from "../config/geoJSON";
 import Autosuggestion from "./Autosuggestion";
+import axios from "axios";
 
 const Map = ReactMapboxGl({
   accessToken: info.mapBoxAccessToken
@@ -36,23 +37,30 @@ class ChooseFence extends Component {
     console.log({ features });
   };
   locationSearch = async value => {
-    let data = await fetch(
-      "https://geocoder.cit.api.here.com/6.2/geocode.json?searchtext=" +
+    let res = await axios.get(
+      "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
         value +
-        "&app_id=" +
-        app_id +
-        "&app_code=" +
-        app_code
-    )
-      .then(res => res.json())
-      .then(resData => {
-        return resData.Response.View[0].Result;
-        this.setState({
-          searchData: resData.Response.View[0].Result
-        });
-      });
+        ".json?access_token=" +
+        info.mapBoxAccessToken
+    );
+
+    // let res = await axios.get(
+    //   "https://geocoder.cit.api.here.com/6.2/geocode.json?searchtext=" +
+    //     value +
+    //     "&app_id=" +
+    //     app_id +
+    //     "&app_code=" +
+    //     app_code + "&language=en"
+    // );
+    // .then(resData => {
+    //   return resData.Response.View[0].Result;
+    //   this.setState({
+    //     searchData: resData.Response.View[0].Result
+    //   });
+    // });
     // console.log(data);
-    return data;
+    // return data;
+    return res.data.features;
   };
   showSuggestions = e => {
     this.setState({
@@ -60,9 +68,10 @@ class ChooseFence extends Component {
     });
   };
   goToLocation = value => {
+    console.log("value", value);
     this.setState({
-      lat: value.Location.DisplayPosition.Latitude,
-      lon: value.Location.DisplayPosition.Longitude
+      lat: value.center[1],
+      lon: value.center[0]
     });
   };
 
@@ -83,10 +92,10 @@ class ChooseFence extends Component {
           style="mapbox://styles/mapbox/outdoors-v9" // eslint-disable-line
           containerStyle={{ height: "400px", width: "400px" }}
           center={[this.state.lon, this.state.lat]}
-          zoom={[13]}
+          zoom={[15]}
         >
           <DrawControl
-            position="top-left"
+            position="top-right"
             onDrawCreate={this.onDrawCreate}
             onDrawUpdate={this.onDrawUpdate}
           />
