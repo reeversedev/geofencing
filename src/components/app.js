@@ -6,6 +6,7 @@ import Routes from "../config/Routes";
 import Login from "./Login";
 import Maps from "./Maps";
 import Home from "./Home";
+import Circle from "./Circle";
 
 class App extends Component {
   render() {
@@ -16,6 +17,7 @@ class App extends Component {
             <Route exact path={Routes.home} component={Home} />
             <Route exact path={Routes.login} component={Home} />
             <Route exact path={Routes.choosefence} component={Home} />
+            <Route exact path={Routes.circle} component={Circle} />
           </Switch>
         </Router>
       </div>
