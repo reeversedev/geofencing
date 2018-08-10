@@ -1,34 +1,49 @@
 import React, { Component } from "react";
-import {
-  Row,
-  Col,
-  Container,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormText
-} from "reactstrap";
+import { Form, Icon, Input, Button, Checkbox } from "antd";
 
 import { Link } from "react-router-dom";
 import Routes from "../config/Routes";
+
+const FormItem = Form.Item;
 class Login extends Component {
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        console.log("Received values of form: ", values);
+      }
+    });
+  };
   render() {
     return (
       <div>
-        <fieldset>
-          <h2 class="fs-title">Login</h2>
-          <h3 class="fs-subtitle">Please add your credentials</h3>
-          <input type="text" name="email" placeholder="Email" />
-          <input type="password" name="password" placeholder="Password" />
-          <Link
-            name="next"
-            class="next action-button btn"
-            to={Routes.choosefence}
-          >
-            Next
-          </Link>
-        </fieldset>
+        <Form onSubmit={this.handleSubmit} className="login-form">
+          <FormItem>
+            <Input
+              prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />}
+              placeholder="Username"
+            />
+          </FormItem>
+          <FormItem>
+            <Input
+              prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />}
+              type="password"
+              placeholder="Password"
+            />
+          </FormItem>
+          <FormItem>
+            <Checkbox>Remember me</Checkbox>
+            <a className="login-form-forgot" href="">
+              Forgot password?
+            </a>
+          </FormItem>
+          <FormItem>
+            <Link name="next" class="btn btn-primary" to={Routes.choosefence}>
+              Login
+            </Link>{" "}
+            Or <a href="">register now!</a>
+          </FormItem>
+        </Form>
       </div>
     );
   }

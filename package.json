@@ -26,6 +26,7 @@
   "dependencies": {
     "@mapbox/mapbox-gl-draw": "^1.0.9",
     "@turf/length": "^6.0.2",
+    "antd": "^3.8.0",
     "axios": "^0.18.0",
     "babel-preset-stage-1": "^6.1.18",
     "bootstrap": "^4.1.3",

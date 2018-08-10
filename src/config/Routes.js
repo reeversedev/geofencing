@@ -2,6 +2,8 @@ const Routes = {
   home: "/",
   choosefence: "/choosefence",
   login: "/login",
-  circle: "/circle"
+  circle: "/circle",
+  demographics: "/demographics",
+  content: '/content'
 };
 export default Routes;

@@ -1,27 +1,25 @@
 import React, { Component } from "react";
-import Header from "./Header";
 import ReactMapboxGl, {
   Layer,
   Feature,
   GeoJSONLayer,
   Marker
 } from "react-mapbox-gl";
-import DrawControl from "react-mapbox-gl-draw";
-import { app_code, app_id } from "../config/constants";
 const _ = require("lodash");
-import MapboxDraw from "@mapbox/mapbox-gl-draw";
+
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import info from "../config/info";
 import Autosuggestion from "./Autosuggestion";
 import axios from "axios";
 import styled from "styled-components";
-import RadiusMode from "./RadiusMode";
+import { FormItem, Input, Icon, Divider } from "antd";
+import { Row, Col, FormGroup, Form, Label } from "reactstrap";
+
 
 import mapboxgl from "mapbox-gl";
 
-// const Map = ReactMapboxGl({
-//   accessToken: info.mapBoxAccessToken
-// });
+import { Link } from "react-router-dom";
+import Routes from "../config/Routes";
 
 const Mark = styled.div`
   background-color: #e74c3c;
@@ -31,14 +29,15 @@ const Mark = styled.div`
   border: 4px solid #eaa29b;
 `;
 
-const renderMap = center => {
+const renderMap = (center, radius) => {
+  console.log("radius", radius);
   const mapDiv = document.getElementById("map");
   mapDiv.innerHTML = "";
   mapDiv.style.position = "relative";
   // mapDiv.style.top = "32px";
   // mapDiv.style.right = 0;
   mapDiv.style.width = "400px";
-  mapDiv.style.height = "400px";
+  mapDiv.style.height = "250px";
   // mapDiv.style.left = 0;
   // mapDiv.style.bottom = 0;
 
@@ -111,8 +110,8 @@ const renderMap = center => {
     fillColor: "#29AB87",
     fillOpacity: 0.2,
     minRadius: 100,
-    maxRadius: 500000,
-    debugEl: document.body.appendChild(document.createElement("div"))
+    maxRadius: 500000
+    // debugEl: document.body.appendChild(document.createElement("div"))
   };
 
   const extraPrettyEditableOpts = _.extend(
@@ -126,26 +125,9 @@ const renderMap = center => {
     fillOpacity: 0.2
   };
 
-  // window.editableCircle0 = new MapboxCircle(center, 350, editableOpts).addTo(
-  //   map
-  // );
-
-  // window.plainCircle0 = new MapboxCircle(center, 250, nonEditableOpts).addTo(
-  //   map
-  // );
-
-  // window.plainCircle1 = new MapboxCircle(center, 300, nonEditableOpts).addTo(
-  //   map
-  // );
-
-  // window.editableCircle1 = new MapboxCircle(center, 300, editableOpts)
-  //   .addTo(map)
-  //   .setCenter(center)
-  //   .setRadius(50);
-
   window.editableCircle2 = new MapboxCircle(
     center,
-    500,
+    radius,
     extraPrettyEditableOpts
   ).addTo(map);
   // window.editableCircle3 = new MapboxCircle(center, 225, editableOpts).addTo(
@@ -186,14 +168,14 @@ const renderMap = center => {
       // eslint-disable-next-line
       console.log("editableCircle2/centerchanged", circleObj.getCenter());
     })
-    // .on("click", function(mouseEvent) {
-    //   // eslint-disable-next-line
-    //   console.log("editableCircle2/click", mouseEvent);
-    // })
-    // .on("contextmenu", function(mouseEvent) {
-    //   // eslint-disable-next-line
-    //   console.log("editableCircle2/contextmenu", mouseEvent);
-    // })
+    .on("click", function(mouseEvent) {
+      // eslint-disable-next-line
+      console.log("editableCircle2/click", mouseEvent);
+    })
+    .on("contextmenu", function(mouseEvent) {
+      // eslint-disable-next-line
+      console.log("editableCircle2/contextmenu", mouseEvent);
+    });
 
   // window.editableCircle3
   //   .on("radiuschanged", function(circleObj) {
@@ -227,7 +209,8 @@ class ChooseFence extends Component {
       lon: 0,
       value: "",
       searchData: [],
-      selected: undefined
+      selected: undefined,
+      radius: 500
     };
   }
 
@@ -253,7 +236,7 @@ class ChooseFence extends Component {
     });
   };
   goToLocation = value => {
-    console.log("value", value);
+    // console.log("value", value);
     this.setState({
       lat: value.center[1],
       lon: value.center[0]
@@ -272,63 +255,102 @@ class ChooseFence extends Component {
   };
   componentDidUpdate = () => {
     const center = { lat: this.state.lat, lng: this.state.lon };
-    renderMap(center);
+    const radius = this.state.radiusValue;
+    renderMap(center, radius);
   };
   componentDidMount = () => {
     const center = { lat: this.state.lat, lng: this.state.lon };
-    renderMap(center);
+    const radius = 500;
+    renderMap(center, radius);
+  };
+  changeRadius = e => {
+    if (e.target.value <= 0 || e.target.value === undefined) {
+      this.setState({
+        radiusValue: 500
+      });
+    } else {
+      this.setState({
+        radiusValue: e.target.value
+      });
+    }
   };
   render() {
     return (
       <div>
         <div id="mapContainer" />
         <div className="App-header">
-          {/* <img src={logo} className="App-logo" alt="logo" /> */}
-          <h2>Create a Fence</h2>
-          <Autosuggestion
-            searchLocation={this.locationSearch}
-            place={this.state.searchData}
-            goToLocation={this.goToLocation}
-          />
-          <div style={{ position: "relative",width:'400px',height:'400px' }}>
-            <div id="map" />
-            <div id="menu" />
-          </div>
+          <Row>
+            <Col>
+              {/* <img src={logo} className="App-logo" alt="logo" /> */}
+              <h2>1. Create a Fence</h2>
+              <div className="ml-4">
+                <Autosuggestion
+                  searchLocation={this.locationSearch}
+                  place={this.state.searchData}
+                  goToLocation={this.goToLocation}
+                />
+                <input
+                  type="number"
+                  className="react-autosuggest__input mt-2"
+                  placeholder="Enter radius of the area"
+                  onChange={this.changeRadius}
+                />
+              </div>
+            </Col>
+            <Col>
+              <div
+                // style={{
+                //   position: "relative",
+                //   width: "400px",
+                //   height: "400px"
+                // }}
+                className="mt-2"
+              >
+                <div id="map" />
+                <div id="menu" />
+              </div>
+            </Col>
+          </Row>
+          <Divider />
+          <Row>
+            <Col>
+              <h2>2. Choose Demographics</h2>
+              <Form>
+                <Row>
+                  <Col>
+                    <FormGroup tag="fieldset">
+                      <legend>Platform</legend>
+                      <Label check>
+                        <Input type="radio" name="radio1" /> iOS
+                      </Label>
+                      <Label check className="ml-2">
+                        <Input type="radio" name="radio1" /> Android
+                      </Label>
+                    </FormGroup>
+                  </Col>
+                  <Col>
+                    <FormGroup tag="fieldset">
+                      <legend>Gender</legend>
+                      <Label check>
+                        <Input type="radio" name="radio1" /> Male
+                      </Label>
+                      <Label check className="ml-2">
+                        <Input type="radio" name="radio1" /> Female
+                      </Label>
+                    </FormGroup>
+                  </Col>
+                  <Col>
+                    <FormGroup tag="fieldset">
+                      <legend>Location</legend>
+                      <Input type="text" name="location" />
+                    </FormGroup>
+                    <Link className="btn btn-primary float-right" to={Routes.content}>Next</Link>
+                  </Col>
+                </Row>
+              </Form>
+            </Col>
+          </Row>
         </div>
-
-        {/* <Map
-          style="mapbox://styles/mapbox/outdoors-v9" // eslint-disable-line
-          containerStyle={{ height: "400px", width: "400px" }}
-          center={[this.state.lon, this.state.lat]}
-          zoom={[15]}
-        >
-          <DrawControl
-            position="top-right"
-            onDrawCreate={this.onDrawCreate}
-            onDrawUpdate={this.onDrawUpdate}
-          />
-          <Layer
-            type="symbol"
-            id="marker"
-            layout={{ "icon-image": "marker-15" }}
-          >
-            <Feature coordinates={[this.state.lon, this.state.lat]} />
-          </Layer>
-          <Marker
-            coordinates={[this.state.lon, this.state.lat]}
-            anchor="bottom"
-          >
-           
-            <img
-              src={
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiDY6oI0F7lvDN_EXW26O-QjjXqM-TRehsrDdijsd-YBBOfAWR"
-              }
-              height="15"
-              width="15"
-            />
-          </Marker>
-        </Map> */}
-        {/* <Map /> */}
       </div>
     );
   }

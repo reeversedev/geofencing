@@ -16,13 +16,13 @@ html {
   /*Image only BG fallback*/
 
   /*background = gradient + image pattern combo*/
-  background: linear-gradient(rgba(196, 102, 0, 0.6), rgba(155, 89, 182, 0.6));
+  /* background: linear-gradient(rgba(196, 102, 0, 0.6), rgba(155, 89, 182, 0.6)); */
 }
 
 body {
   font-family: montserrat, arial, verdana;
 }
-/*form styles*/
+/* form styles */
 #msform {
   width: 400px;
   margin: 50px auto;
@@ -200,4 +200,10 @@ body {
 }
 .mapboxgl-canvas {
   position: relative !important;
+}
+.ant-layout {
+  background: white!important;
+}
+.mapboxgl-ctrl-bottom-right {
+  display: none;
 }

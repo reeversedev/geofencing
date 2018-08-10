@@ -7,6 +7,8 @@ import Login from "./Login";
 import Maps from "./Maps";
 import Home from "./Home";
 import Circle from "./Circle";
+import Demographics from "./Demographics";
+import 'antd/dist/antd.css';  // or 'antd/dist/antd.less'
 
 class App extends Component {
   render() {
@@ -17,7 +19,7 @@ class App extends Component {
             <Route exact path={Routes.home} component={Home} />
             <Route exact path={Routes.login} component={Home} />
             <Route exact path={Routes.choosefence} component={Home} />
-            <Route exact path={Routes.circle} component={Circle} />
+            <Route exact path={Routes.content} component={Home} />
           </Switch>
         </Router>
       </div>

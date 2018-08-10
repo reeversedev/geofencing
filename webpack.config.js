@@ -25,6 +25,9 @@ module.exports = {
           presets: ["react", "es2015", "stage-1"]
         }
       }
+    ],
+    "plugins": [
+      ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": "css" }] // `style: true` for less
     ]
   },
   resolve: {
