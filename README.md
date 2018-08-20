@@ -14,4 +14,4 @@ Starting the server
 npm start
 ```
 
-Locate to http://localhost:8080
+Locate to http://localhost:8080/login
